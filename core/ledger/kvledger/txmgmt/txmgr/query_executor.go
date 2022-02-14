@@ -359,6 +359,21 @@ func (q *queryExecutor) ExecuteQueryOnPrivateData(ns, coll, query string) (commo
 	return &pvtdataResultsItr{ns, coll, dbItr}, nil
 }
 
+// ExecuteQueryOnPrivateDataWithPagination
+func (q *queryExecutor) ExecuteQueryOnPrivateDataWithPagination(ns, coll, query, bookmark string, pageSize int32) (ledger.QueryResultsIterator, error) {
+	if err := q.validateCollName(ns, coll); err != nil {
+		return nil, err
+	}
+	if err := q.checkDone(); err != nil {
+		return nil, err
+	}
+	dbItr, err := q.txmgr.db.ExecuteQueryOnPrivateDataWithPagination(ns, coll, query, bookmark, pageSize)
+	if err != nil {
+		return nil, err
+	}
+	return &queryResultsItr{DBItr: dbItr, RWSetBuilder: q.rwsetBuilder}, nil
+}
+
 // Done implements method in interface `ledger.QueryExecutor`
 func (q *queryExecutor) Done() {
 	logger.Debugf("Done with transaction simulation / query execution [%s]", q.txid)

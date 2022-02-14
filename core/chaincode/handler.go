@@ -844,7 +844,13 @@ func (h *Handler) HandleGetQueryResult(msg *pb.ChaincodeMessage, txContext *Tran
 		if err := errorIfCreatorHasNoReadPermission(namespaceID, collection, txContext); err != nil {
 			return nil, err
 		}
-		executeIter, err = txContext.TXSimulator.ExecuteQueryOnPrivateData(namespaceID, collection, getQueryResult.Query)
+		if isMetadataSetForPagination(metadata) {
+			isPaginated = true
+			executeIter, err = txContext.TXSimulator.ExecuteQueryOnPrivateDataWithPagination(namespaceID, collection,
+				getQueryResult.Query, metadata.Bookmark, metadata.PageSize)
+		} else {
+			executeIter, err = txContext.TXSimulator.ExecuteQueryOnPrivateData(namespaceID, collection, getQueryResult.Query)
+		}
 	} else if isMetadataSetForPagination(metadata) {
 		isPaginated = true
 		executeIter, err = txContext.TXSimulator.ExecuteQueryWithPagination(namespaceID,

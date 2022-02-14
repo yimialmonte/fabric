@@ -161,6 +161,14 @@ func (s *txSimulator) ExecuteQueryOnPrivateData(namespace, collection, query str
 	return s.queryExecutor.ExecuteQueryOnPrivateData(namespace, collection, query)
 }
 
+// ExecuteQueryOnPrivateDataWithPagination implements method in interface `ledger.TxSimulator`
+func (s *txSimulator) ExecuteQueryOnPrivateDataWithPagination(namespace, collection, query, bookmark string, pageSize int32) (ledger.QueryResultsIterator, error) {
+	if err := s.checkBeforePvtdataQueries(); err != nil {
+		return nil, err
+	}
+	return s.queryExecutor.ExecuteQueryOnPrivateDataWithPagination(namespace, collection, query, bookmark, pageSize)
+}
+
 // GetStateRangeScanIteratorWithPagination implements method in interface `ledger.QueryExecutor`
 func (s *txSimulator) GetStateRangeScanIteratorWithPagination(namespace string, startKey string,
 	endKey string, pageSize int32) (ledger.QueryResultsIterator, error) {

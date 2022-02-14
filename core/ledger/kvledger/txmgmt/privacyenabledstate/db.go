@@ -240,6 +240,11 @@ func (s *DB) GetPrivateDataRangeScanIterator(namespace, collection, startKey, en
 	return s.GetStateRangeScanIterator(derivePvtDataNs(namespace, collection), startKey, endKey)
 }
 
+// ExecuteQueryOnPrivateDataWithPagination executes the given query and returns an iterator that contains results of type specific to the underlying data store.
+func (s DB) ExecuteQueryOnPrivateDataWithPagination(namespace, collection, query, bookmark string, pageSize int32) (statedb.ResultsIterator, error) {
+	return s.ExecuteQueryWithPagination(derivePvtDataNs(namespace, collection), query, bookmark, pageSize)
+}
+
 // ExecuteQueryOnPrivateData executes the given query and returns an iterator that contains results of type specific to the underlying data store.
 func (s DB) ExecuteQueryOnPrivateData(namespace, collection, query string) (statedb.ResultsIterator, error) {
 	return s.ExecuteQuery(derivePvtDataNs(namespace, collection), query)
